@@ -78,7 +78,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
                 'key' => $product['domain'],
                 'expires_at' => $product['nextduedate'],
             ])
-            ->filter(fn ($product) => $product['domain'])
+            ->filter(fn ($product) => $product['key'])
             ->toArray();
 
         $this->planets()->upsert($data, ['id']);
