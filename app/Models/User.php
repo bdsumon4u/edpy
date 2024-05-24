@@ -68,15 +68,15 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
 
     public function syncPlanets(): void
     {
-        $data = Arr::map(
-            WHMCSProvider::api(['action' => 'getclientsproducts', 'clientid' => $this->id]),
-            fn ($product) => [
-                'id' => $product['id'],
-                'name' => $product['name'],
-                'key' => $product['key'],
-                'expires_at' => $product['nextduedate'],
-            ],
-        );
+        $data = Arr::map(WHMCSProvider::api([
+            'action' => 'getclientsproducts',
+            'clientid' => $this->id,
+        ], 'products.product'), fn ($product) => [
+            'id' => $product['id'],
+            'name' => $product['name'],
+            'key' => $product['key'],
+            'expires_at' => $product['nextduedate'],
+        ]);
 
         $this->planets()->upsert($data, ['id']);
     }
