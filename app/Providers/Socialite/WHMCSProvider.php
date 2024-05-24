@@ -62,6 +62,10 @@ class WHMCSProvider extends AbstractProvider implements ProviderInterface
 
     protected function mapUserToObject(array $user)
     {
+        dd(static::api([
+            'action' => 'GetClientsProducts',
+            'email' => $user['email'],
+        ]));
         return (new User)->setRaw($user)->map([
             'id' => static::api([
                 'action' => 'GetClientsProducts',
