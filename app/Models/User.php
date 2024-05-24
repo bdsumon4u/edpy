@@ -14,7 +14,6 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
-use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -68,19 +67,19 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
 
     public function syncPlanets(): void
     {
-        dd(WHMCSProvider::api([
+        $data = collect(WHMCSProvider::api([
             'action' => 'GetClientsProducts',
             'clientid' => $this->id,
-        ], 'products.product'));
-        $data = Arr::map(WHMCSProvider::api([
-            'action' => 'GetClientsProducts',
-            'clientid' => $this->id,
-        ], 'products.product'), fn ($product) => [
-            'id' => $product['id'],
-            'name' => $product['name'],
-            'key' => $product['domain'],
-            'expires_at' => $product['nextduedate'],
-        ]);
+        ], 'products.product'))
+            ->filter(fn ($product) => $product['groupname'] == 'HotashPay')
+            ->map(fn ($product) => [
+                'id' => $product['id'],
+                'name' => $product['name'],
+                'key' => $product['domain'],
+                'expires_at' => $product['nextduedate'],
+            ])
+            ->filter(fn ($product) => $product['domain'])
+            ->toArray();
 
         $this->planets()->upsert($data, ['id']);
     }
