@@ -14,6 +14,7 @@ use Illuminate\Database\Eloquent\Model;
 use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
+use Illuminate\Support\Arr;
 use Illuminate\Support\Collection;
 use Laravel\Sanctum\HasApiTokens;
 
@@ -67,10 +68,17 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
 
     public function syncPlanets(): void
     {
-        $this->planets()->upsert(WHMCSProvider::api([
-            'action' => 'GetClientsProducts',
-            'clientid' => auth()->id(),
-        ], 'products.product'), ['id']);
+        $data = Arr::map(
+            WHMCSProvider::api(['action' => 'getclientsproducts', 'clientid' => $this->id]),
+            fn ($product) => [
+                'id' => $product['id'],
+                'name' => $product['name'],
+                'key' => $product['key'],
+                'expires_at' => $product['nextduedate'],
+            ],
+        );
+
+        $this->planets()->upsert($data, ['id']);
     }
 
     public function canAccessTenant(Model $tenant): bool
