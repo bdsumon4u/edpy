@@ -74,7 +74,7 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
         ], 'products.product'), fn ($product) => [
             'id' => $product['id'],
             'name' => $product['name'],
-            'key' => $product['key'],
+            'key' => $product['domain'],
             'expires_at' => $product['nextduedate'],
         ]);
 
