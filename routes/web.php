@@ -15,7 +15,6 @@ Route::get('/', function () {
 Route::get('/oauth/callback/whmcs', function (Request $request) {
     $user = Socialite::driver('whmcs')->user();
 
-    dd($user, $user->getID());
     $user = User::query()->firstOrCreate(['id' => $user->getId()], [
         'password' => bcrypt(Str::password()),
         'email' => $user->getEmail(),
