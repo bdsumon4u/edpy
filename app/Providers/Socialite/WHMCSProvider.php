@@ -49,9 +49,12 @@ class WHMCSProvider extends AbstractProvider implements ProviderInterface
 
     protected function getUserByToken($token)
     {
-        $response = $this->getHttpClient()->get(static::openID('userinfo_endpoint'), [
+        $endpoint = $this->openID('userinfo_endpoint') . '?' . http_build_query([
+            'access_token' => $token,
+        ]);
+
+        $response = $this->getHttpClient()->get($endpoint, [
             'headers' => ['Accept' => 'application/json'],
-            'form_params' => ['access_token' => $token],
         ]);
 
         return json_decode($response->getBody()->getContents(), true);
