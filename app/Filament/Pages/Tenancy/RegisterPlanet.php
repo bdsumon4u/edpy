@@ -2,7 +2,6 @@
 
 namespace App\Filament\Pages\Tenancy;
 
-use App\Providers\Socialite\WHMCSProvider;
 use Filament\Pages\Tenancy\RegisterTenant;
 use Illuminate\Support\Facades\Http;
 

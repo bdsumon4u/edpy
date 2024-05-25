@@ -21,15 +21,18 @@ class Dashboard extends DashboardPage
             ])
                 ->collect('products.product')
                 ->filter(fn ($product) => $product['groupname'] == 'HotashPay')
-                ->mapWithKeys(fn ($product) => [$product['id'] => [
-                    'name' => current(array_filter($product['customfields']['customfield'], function ($field) {
-                        return $field['name'] == 'License Name';
-                    }))['value'] ?: $product['name'],
-                    'expires_at' => $product['nextduedate'],
-                    'status' => $product['status'],
-                    'key' => $product['domain'],
-                    'id' => $product['id'],
-                ]])
+                ->mapWithKeys(function ($product) {
+                    $licenseField = current(array_filter($product['customfields']['customfield'], fn ($field) => $field['name'] == 'License Name'));
+                    $licenseName = $licenseField ? ($licenseField['value'] ?: $product['name']) : $product['name'];
+
+                    return [$product['id'] => [
+                        'expires_at' => $product['nextduedate'],
+                        'status' => $product['status'],
+                        'key' => $product['domain'],
+                        'id' => $product['id'],
+                        'name' => $licenseName,
+                    ]];
+                })
                 ->filter(fn ($product) => $product['key'])
                 ->toArray();
 
