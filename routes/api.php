@@ -13,7 +13,6 @@ Route::get('/user', function (Request $request) {
 })->middleware('auth:sanctum');
 
 Route::post('/whmcs-sync', function (Request $request) {
-    info('whmcs-sync', $request->all());
     if ($request->only($keys = ['api_username', 'api_password']) !== Arr::only(config('services.whmcs'), $keys)) {
         return response('Unauthorized', 401);
     }
@@ -24,14 +23,10 @@ Route::post('/whmcs-sync', function (Request $request) {
 
     if ($user->wasRecentlyCreated) {
         tap($user, fn ($user) => event(new Registered($user)));
-        info('User created', $user->toArray());
     }
-    info('User found', $user->toArray());
 
     Planet::query()->upsert($request->licenses, ['id']);
-    info('Planets upserted', $request->licenses);
     $user->planets()->syncWithoutDetaching(array_keys($request->licenses));
-    info('Planets synced', $user->planets->toArray());
 
     return response('Synced', 200);
 });
