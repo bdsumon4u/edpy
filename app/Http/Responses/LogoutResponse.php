@@ -9,6 +9,10 @@ class LogoutResponse implements Responsable
 {
     public function toResponse($request): RedirectResponse
     {
+        $request->session()->invalidate();
+
+        $request->session()->regenerateToken();
+
         return redirect()->to('/');
     }
 }
