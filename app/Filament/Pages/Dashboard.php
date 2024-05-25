@@ -22,6 +22,7 @@ class Dashboard extends DashboardPage
             ->filter(fn ($product) => $product['groupname'] == 'HotashPay')
             ->mapWithKeys(fn ($product) => [$product['id'] => [
                 'expires_at' => $product['nextduedate'],
+                'status' => $product['status'],
                 'key' => $product['domain'],
                 'name' => $product['name'],
                 'id' => $product['id'],
