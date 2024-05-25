@@ -23,7 +23,7 @@ class Dashboard extends DashboardPage
                 ->filter(fn ($product) => $product['groupname'] == 'HotashPay')
                 ->mapWithKeys(fn ($product) => [$product['id'] => [
                     'name' => current(array_filter($product['customfields']['customfield'], function ($field) {
-                        return $field['name'] == 'Planet Name';
+                        return $field['name'] == 'License Name';
                     }))['value'] ?: $product['name'],
                     'expires_at' => $product['nextduedate'],
                     'status' => $product['status'],
