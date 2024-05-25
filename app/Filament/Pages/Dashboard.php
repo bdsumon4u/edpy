@@ -37,7 +37,7 @@ class Dashboard extends DashboardPage
                 ->toArray();
 
             Planet::query()->upsert($data, ['id']);
-            tap(auth()->user())->planets()->syncWithoutDetaching(array_keys($data));
+            tap(auth()->user(), fn ($user) => $user->planets()->syncWithoutDetaching(array_keys($data)));
         // });
 
         return parent::render();
