@@ -1,5 +1,6 @@
 <?php
 
+use App\Models\Planet;
 use App\Models\User;
 use Filament\Events\Auth\Registered;
 use Illuminate\Http\Request;
@@ -24,7 +25,8 @@ Route::post('/whmcs-sync', function (Request $request) {
         tap($user, fn ($user) => event(new Registered($user)));
     }
 
-    $user->planets()->upsert($request->licenses, ['id']);
+    Planet::query()->upsert($request->licenses, ['id']);
+    $user->planets()->syncWithoutDetaching(array_keys($request->licenses));
 
     return response('Synced', 200);
 });

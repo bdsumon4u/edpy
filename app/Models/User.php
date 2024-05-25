@@ -72,16 +72,17 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
             'clientid' => $this->id,
         ], 'products.product'))
             ->filter(fn ($product) => $product['groupname'] == 'HotashPay')
-            ->map(fn ($product) => [
-                'id' => $product['id'],
-                'name' => $product['name'],
-                'key' => $product['domain'],
+            ->mapWithKeys(fn ($product) => [$product['id'] => [
                 'expires_at' => $product['nextduedate'],
-            ])
+                'key' => $product['domain'],
+                'name' => $product['name'],
+                'id' => $product['id'],
+            ]])
             ->filter(fn ($product) => $product['key'])
             ->toArray();
 
-        $this->planets()->upsert($data, ['id']);
+        Planet::query()->upsert($data, ['id']);
+        $this->planets()->syncWithoutDetaching(array_keys($data));
     }
 
     public function canAccessTenant(Model $tenant): bool
