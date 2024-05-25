@@ -2,7 +2,7 @@
 
 namespace App\Http\Responses;
 
-use Illuminate\Contracts\Support\Responsable;
+use Filament\Http\Responses\Auth\Contracts\LogoutResponse as Responsable;
 use Illuminate\Http\RedirectResponse;
 
 class LogoutResponse implements Responsable
