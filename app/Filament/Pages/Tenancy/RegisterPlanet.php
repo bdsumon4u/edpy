@@ -4,6 +4,7 @@ namespace App\Filament\Pages\Tenancy;
 
 use App\Providers\Socialite\WHMCSProvider;
 use Filament\Pages\Tenancy\RegisterTenant;
+use Illuminate\Support\Facades\Http;
 
 class RegisterPlanet extends RegisterTenant
 {
@@ -23,11 +24,14 @@ class RegisterPlanet extends RegisterTenant
     {
         return [
             'plans' => cache()->rememberForever('whmcs-plans', function () {
-                return WHMCSProvider::api([
+                return Http::get(config('services.whmcs.api_endpoint'), [
+                    'username' => config('services.whmcs.api_username'),
+                    'password' => config('services.whmcs.api_password'),
+                    'gid' => config('services.whmcs.group_id'),
                     'action' => 'GetProducts',
                     'module' => 'licensing',
-                    'gid' => config('services.whmcs.group_id'),
-                ], 'products.product');
+                    'responsetype' => 'json',
+                ])->json('products.product');
             }),
         ];
     }
