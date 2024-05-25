@@ -11,23 +11,3 @@ use Laravel\Socialite\Facades\Socialite;
 Route::get('/', function () {
     return view('welcome');
 });
-
-Route::get('/oauth/callback/whmcs', function (Request $request) {
-    $user = Socialite::driver('whmcs')->user();
-
-    $user = User::query()->firstOrCreate(['id' => $user->getId()], [
-        'password' => bcrypt(Str::password()),
-        'email' => $user->getEmail(),
-        'name' => $user->getName(),
-    ]);
-
-    if ($user->wasRecentlyCreated) {
-        tap($user, fn ($user) => event(new Registered($user)));
-    }
-
-    $user->syncPlanets();
-
-    tap(Filament::getCurrentPanel()->auth())->login($user);
-
-    return redirect(Filament::getHomeUrl());
-})->middleware('panel:app');

@@ -29,7 +29,11 @@ class AppPanelProvider extends PanelProvider
             ->default()
             ->id('app')
             ->path('app')
-            ->login(fn () => Socialite::driver('whmcs')->redirect())
+            ->login()
+            // ->registration()
+            ->passwordReset()
+            ->emailVerification()
+            ->profile()
             ->colors([
                 'primary' => Color::Neutral,
             ])

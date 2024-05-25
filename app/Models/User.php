@@ -15,6 +15,7 @@ use Illuminate\Database\Eloquent\Relations\BelongsToMany;
 use Illuminate\Foundation\Auth\User as Authenticatable;
 use Illuminate\Notifications\Notifiable;
 use Illuminate\Support\Collection;
+use Illuminate\Support\Facades\Http;
 use Laravel\Sanctum\HasApiTokens;
 
 class User extends Authenticatable implements FilamentUser, HasTenants, MustVerifyEmail
@@ -63,26 +64,6 @@ class User extends Authenticatable implements FilamentUser, HasTenants, MustVeri
     public function planets(): BelongsToMany
     {
         return $this->belongsToMany(Planet::class);
-    }
-
-    public function syncPlanets(): void
-    {
-        $data = collect(WHMCSProvider::api([
-            'action' => 'GetClientsProducts',
-            'clientid' => $this->id,
-        ], 'products.product'))
-            ->filter(fn ($product) => $product['groupname'] == 'HotashPay')
-            ->mapWithKeys(fn ($product) => [$product['id'] => [
-                'expires_at' => $product['nextduedate'],
-                'key' => $product['domain'],
-                'name' => $product['name'],
-                'id' => $product['id'],
-            ]])
-            ->filter(fn ($product) => $product['key'])
-            ->toArray();
-
-        Planet::query()->upsert($data, ['id']);
-        $this->planets()->syncWithoutDetaching(array_keys($data));
     }
 
     public function canAccessTenant(Model $tenant): bool

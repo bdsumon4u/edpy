@@ -25,11 +25,5 @@ class AppServiceProvider extends ServiceProvider
     public function boot(): void
     {
         Model::unguard();
-
-        Socialite::extend('whmcs', function ($app) {
-            return Socialite::buildProvider(WHMCSProvider::class, $app['config']['services.whmcs']);
-        });
-
-        $this->app->singleton(LogoutResponseContract::class, LogoutResponse::class);
     }
 }
