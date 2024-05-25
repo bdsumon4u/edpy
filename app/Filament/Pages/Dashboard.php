@@ -11,7 +11,7 @@ class Dashboard extends DashboardPage
 {
     public function render(): View
     {
-        // cache()->remember('whmcs-sync:'.auth()->id(), now()->addDay(), function () {
+        cache()->remember('whmcs-sync:'.auth()->id(), now()->addDay(), function () {
             $data = Http::get(config('services.whmcs.api_endpoint'), [
                 'username' => config('services.whmcs.api_username'),
                 'password' => config('services.whmcs.api_password'),
@@ -38,7 +38,7 @@ class Dashboard extends DashboardPage
 
             Planet::query()->upsert($data, ['id']);
             tap(auth()->user(), fn ($user) => $user->planets()->syncWithoutDetaching(array_keys($data)));
-        // });
+        });
 
         return parent::render();
     }
