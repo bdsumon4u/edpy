@@ -22,7 +22,7 @@ class RegisterPlanet extends RegisterTenant
     protected function getViewData(): array
     {
         return [
-            'plans' => cache()->rememberForever('whmcs-plans', function () {
+            'plans' => cache()->remember('whmcs-plans', now()->addDay(), function () {
                 return Http::get(config('services.whmcs.api_endpoint'), [
                     'username' => config('services.whmcs.api_username'),
                     'password' => config('services.whmcs.api_password'),
