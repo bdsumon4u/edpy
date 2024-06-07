@@ -35,4 +35,4 @@ Route::post('/whmcs-sync', function (Request $request) {
 
 Route::any('/sms/{tenant}', function (Request $request) {
     info('SMS: ', $request->all());
-})->middleware([SetUpPanel::class.'app', IdentifyTenant::class]);
+})->middleware([SetUpPanel::class.':app', IdentifyTenant::class]);
