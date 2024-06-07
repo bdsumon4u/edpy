@@ -20,6 +20,6 @@ return [
     ],
     'tenancy' => [
         'enabled' => true,
-        'awareness' => false,
+        'awareness' => true,
     ],
 ];
