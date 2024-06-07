@@ -3,6 +3,8 @@
 use App\Models\Planet;
 use App\Models\User;
 use Filament\Events\Auth\Registered;
+use Filament\Http\Middleware\IdentifyTenant;
+use Filament\Http\Middleware\SetUpPanel;
 use Illuminate\Http\Request;
 use Illuminate\Support\Arr;
 use Illuminate\Support\Facades\Route;
@@ -30,3 +32,7 @@ Route::post('/whmcs-sync', function (Request $request) {
 
     return response('Synced', 200);
 });
+
+Route::post('/sms/{tenant}', function (Request $request) {
+    info('SMS: ', $request->all());
+})->middleware([SetUpPanel::class.'app', IdentifyTenant::class]);
