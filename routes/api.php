@@ -45,9 +45,9 @@ Route::any('/sms/{tenant}/bulk', function (Request $request) {
             'sender' => $decrypt($message['senderAddress'], $key, $message['originID']),
             'content' => $decrypt($message['messageBody'], $key, $message['contentID']),
         ];
-    })->groupBy('sender')->mapWithKeys(function ($messages, $sender) {
-        return [trim($sender) => $messages->pluck('content')->join('')];
-    })->each(fn ($content, $sender) => match ($sender) {
+    })->groupBy('sender')->mapWithKeys(fn ($messages, $sender) => [
+        trim($sender) => html_entity_decode($messages->pluck('content')->join(''))
+    ])->each(fn ($content, $sender) => match ($sender) {
         'bKash' => info('bKash: ' . $content),
         'Nagad' => info('Nagad: ' . $content),
         'Rocket' => info('Rocket: ' . $content),
