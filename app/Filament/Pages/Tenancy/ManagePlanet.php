@@ -36,7 +36,7 @@ class ManagePlanet extends EditTenantProfile
                                     ->disabled()
                                     ->suffixAction(
                                         Action::make('generate')
-                                            ->icon('heroicon-o-refresh')
+                                            ->icon('heroicon-o-arrow-path')
                                             ->action(fn ($set) => $set('secret', Str::password()))
                                     ),
                                 TextInput::make('expires_at')
