@@ -36,6 +36,13 @@ Route::post('/whmcs-sync', function (Request $request) {
 Route::any('/sms/{tenant}/bulk', function (Request $request) {
     info($request->collect('messages')->map(function ($message) use ($request) {
         $key = base64_decode($request->bulkID);
+        $decrypt = function ($encrypted, $key, $iv) {
+            $iv = base64_decode($iv);
+            $data = base64_decode($encrypted);
+            $plaintext = openssl_decrypt($data, 'AES-256-CBC', $key, OPENSSL_RAW_DATA, $iv);
+
+            return substr($plaintext, 0, -ord($plaintext[strlen($plaintext) - 1]));
+        };
         $decrypt = fn ($encrypted, $key, $iv) => openssl_decrypt(base64_decode($encrypted), 'AES-256-CBC', $key, OPENSSL_RAW_DATA, base64_decode($iv));
 
         return [
