@@ -32,9 +32,6 @@ class ManagePlanet extends EditTenantProfile
                                 TextInput::make('key')
                                     ->label('Key')
                                     ->disabled(),
-                                TextInput::make('plan')
-                                    ->label('Type')
-                                    ->disabled(),
                                 TextInput::make('expires_at')
                                     ->label('Expires at')
                                     ->formatStateUsing(function (Model $record): string {
@@ -45,11 +42,7 @@ class ManagePlanet extends EditTenantProfile
                             ->columns(2)
                             ->columnSpan(2),
                         Section::make('Domain information')
-                            ->schema(collect(range(1, $this->tenant->plan()->limit))->map(function ($i) {
-                                return TextInput::make('domains.' . $i)
-                                    ->placeholder('Domain ' . $i)
-                                    ->hiddenLabel();
-                            })->toArray())
+                            ->schema([])
                             ->columnSpan(1),
                     ]),
             ]);
