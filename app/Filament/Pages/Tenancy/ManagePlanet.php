@@ -2,12 +2,14 @@
 
 namespace App\Filament\Pages\Tenancy;
 
+use Filament\Forms\Components\Actions\Action;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
 use Filament\Forms\Form;
 use Filament\Pages\Tenancy\EditTenantProfile;
 use Illuminate\Database\Eloquent\Model;
+use Illuminate\Support\Str;
 
 class ManagePlanet extends EditTenantProfile
 {
@@ -27,13 +29,17 @@ class ManagePlanet extends EditTenantProfile
                         Section::make('Planet information')
                             ->schema([
                                 TextInput::make('name')
-                                    ->label('Name')
                                     ->required(),
                                 TextInput::make('key')
-                                    ->label('Key')
                                     ->disabled(),
+                                TextInput::make('secret')
+                                    ->disabled()
+                                    ->suffixAction(
+                                        Action::make('generate')
+                                            ->icon('heroicon-o-refresh')
+                                            ->action(fn ($set) => $set('secret', Str::password()))
+                                    ),
                                 TextInput::make('expires_at')
-                                    ->label('Expires at')
                                     ->formatStateUsing(function (Model $record): string {
                                         return $record->expires_at->format('d-M-Y');
                                     })
