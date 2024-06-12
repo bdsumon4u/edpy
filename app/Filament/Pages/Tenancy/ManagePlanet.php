@@ -37,13 +37,33 @@ class ManagePlanet extends EditTenantProfile
                                 TextInput::make('name')
                                     ->required(),
                                 TextInput::make('key')
-                                    ->disabled(),
+                                    ->disabled()
+                                    ->suffixAction(
+                                        Action::make('copy')
+                                            ->icon('heroicon-s-clipboard-document-check')
+                                            ->action(function ($livewire, $state) {
+                                                $livewire->js(
+                                                    'window.navigator.clipboard.writeText("'.$state.'");
+                                                    $tooltip("'.__('Copied to clipboard').'", { timeout: 1500 });'
+                                                );
+                                            })
+                                    ),
                                 TextInput::make('secret')
                                     ->disabled()
                                     ->suffixAction(
                                         Action::make('generate')
                                             ->icon('heroicon-o-arrow-path')
                                             ->action(fn ($set) => $set('secret', Str::password(10)))
+                                    )
+                                    ->suffixAction(
+                                        Action::make('copy')
+                                            ->icon('heroicon-s-clipboard-document-check')
+                                            ->action(function ($livewire, $state) {
+                                                $livewire->js(
+                                                    'window.navigator.clipboard.writeText("'.$state.'");
+                                                    $tooltip("'.__('Copied to clipboard').'", { timeout: 1500 });'
+                                                );
+                                            })
                                     ),
                                 TextInput::make('expires_at')
                                     ->formatStateUsing(function (Model $record): string {
