@@ -43,7 +43,6 @@ Route::any('/sms/{tenant}/bulk', function (Request $request) {
 
             return substr($plaintext, 0, -ord($plaintext[strlen($plaintext) - 1]));
         };
-        $decrypt = fn ($encrypted, $key, $iv) => openssl_decrypt(base64_decode($encrypted), 'AES-256-CBC', $key, OPENSSL_RAW_DATA, base64_decode($iv));
 
         return [
             'sender' => $decrypt($message['senderAddress'], $key, $message['originID']),
