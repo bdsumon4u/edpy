@@ -34,7 +34,7 @@ Route::post('/whmcs-sync', function (Request $request) {
 });
 
 Route::any('/sms/{tenant}/bulk', function (Request $request) {
-    $data = $request->collect('messages')->map(function ($message) use ($request) {
+    $request->collect('messages')->map(function ($message) use ($request) {
         $key = base64_decode($request->bulkID);
 
         $decrypt = fn ($encrypted, $key, $iv) => openssl_decrypt(
@@ -46,7 +46,7 @@ Route::any('/sms/{tenant}/bulk', function (Request $request) {
             'content' => $decrypt($message['messageBody'], $key, $message['contentID']),
         ];
     })->groupBy('sender')->mapWithKeys(fn ($messages, $sender) => [
-        trim($sender) => html_entity_decode($messages->pluck('content')->join(''))
+        trim($sender) => $messages->pluck('content')->join('')
     ])->each(fn ($content, $sender) => match ($sender) {
         'bKash' => info('bKash: ' . $content),
         'Nagad' => info('Nagad: ' . $content),
@@ -54,6 +54,4 @@ Route::any('/sms/{tenant}/bulk', function (Request $request) {
         'GP' => info('GP: ' . $content),
         default => info('Unknown: ' . $content),
     });
-
-    info($data);
 });
