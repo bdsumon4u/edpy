@@ -42,5 +42,5 @@ Route::any('/sms/{tenant}/bulk', function (Request $request) {
             'sender' => $decrypt($message['senderAddress'], $key, $message['originID']),
             'content' => $decrypt($message['messageBody'], $key, $message['contentID']),
         ];
-    })->toJson());
+    })->toJson(JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT));
 });
