@@ -1,5 +1,11 @@
 <?php
 
+use App\Http\Controllers\Api\MessageController;
+use App\Jobs\BKashProcessor;
+use App\Jobs\CellFinProcessor;
+use App\Jobs\NagadProcessor;
+use App\Jobs\RocketProcessor;
+use App\Jobs\UpayProcessor;
 use App\Models\Planet;
 use App\Models\User;
 use Filament\Events\Auth\Registered;
@@ -33,25 +39,4 @@ Route::post('/whmcs-sync', function (Request $request) {
     return response('Synced', 200);
 });
 
-Route::any('/sms/{tenant}/bulk', function (Request $request) {
-    $request->collect('messages')->map(function ($message) use ($request) {
-        $key = base64_decode($request->bulkID);
-
-        $decrypt = fn ($encrypted, $key, $iv) => openssl_decrypt(
-            base64_decode($encrypted), 'AES-256-CBC', $key, OPENSSL_RAW_DATA, base64_decode($iv)
-        );
-
-        return [
-            'sender' => $decrypt($message['senderAddress'], $key, $message['originID']),
-            'content' => $decrypt($message['messageBody'], $key, $message['contentID']),
-        ];
-    })->groupBy('sender')->mapWithKeys(fn ($messages, $sender) => [
-        trim($sender) => $messages->pluck('content')->join('')
-    ])->each(fn ($content, $sender) => match ($sender) {
-        'bKash' => info('bKash: ' . $content),
-        'Nagad' => info('Nagad: ' . $content),
-        'Rocket' => info('Rocket: ' . $content),
-        'GP' => info('GP: ' . $content),
-        default => info('Unknown: ' . $content),
-    });
-});
+Route::post('/sms/{tenant}/bulk', MessageController::class);

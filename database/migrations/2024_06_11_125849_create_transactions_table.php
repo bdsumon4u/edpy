@@ -19,6 +19,8 @@ return new class extends Migration
                 ->cascadeOnDelete()
                 ->cascadeOnUpdate();
             $table->decimal('amount');
+            $table->string('sender')->index();
+            $table->string('trxID')->index();
             $table->timestamps();
         });
     }

@@ -2,6 +2,7 @@
 
 namespace App\Providers\Filament;
 
+use App\Filament\Pages\Tenancy\ManagePlanet;
 use App\Filament\Pages\Tenancy\RegisterPlanet;
 use App\Models\Planet;
 use Filament\Http\Middleware\Authenticate;
@@ -69,7 +70,7 @@ class AppPanelProvider extends PanelProvider
             ])
             ->tenant(Planet::class, slugAttribute: 'key')
             ->tenantRegistration(RegisterPlanet::class)
-            // ->tenantProfile(ManagePlanet::class)
+            ->tenantProfile(ManagePlanet::class)
             ->viteTheme('resources/css/filament/app/theme.css')
             ->spa();
     }
