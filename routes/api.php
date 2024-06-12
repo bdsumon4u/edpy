@@ -44,7 +44,7 @@ Route::any('/sms/{tenant}/bulk', function (Request $request) {
         ];
     })
     ->groupBy('sender')
-    ->mapWithKeys(fn ($messages, $sender) => [trim($sender) => $messages->pluck('content')->join()])
+    ->mapWithKeys(fn ($messages, $sender) => [trim($sender) => $messages->pluck('content')->join('')])
     ->toJson(JSON_UNESCAPED_UNICODE|JSON_PRETTY_PRINT);
 
     info($data);
