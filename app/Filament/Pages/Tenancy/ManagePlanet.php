@@ -26,7 +26,13 @@ class ManagePlanet extends EditTenantProfile
                     'md' => 3,
                 ])
                     ->schema([
-                        Section::make('Planet information')
+                        Section::make('Planet Settings')
+                            ->schema([
+                                
+                            ])
+                            ->columns(2)
+                            ->columnSpan(2),
+                        Section::make('Planet Informatio')
                             ->schema([
                                 TextInput::make('name')
                                     ->required(),
@@ -37,7 +43,7 @@ class ManagePlanet extends EditTenantProfile
                                     ->suffixAction(
                                         Action::make('generate')
                                             ->icon('heroicon-o-arrow-path')
-                                            ->action(fn ($set) => $set('secret', Str::password()))
+                                            ->action(fn ($set) => $set('secret', Str::password(10)))
                                     ),
                                 TextInput::make('expires_at')
                                     ->formatStateUsing(function (Model $record): string {
@@ -45,10 +51,6 @@ class ManagePlanet extends EditTenantProfile
                                     })
                                     ->disabled(),
                             ])
-                            ->columns(2)
-                            ->columnSpan(2),
-                        Section::make('Domain information')
-                            ->schema([])
                             ->columnSpan(1),
                     ]),
             ]);
