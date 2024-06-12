@@ -45,9 +45,15 @@ Route::any('/sms/{tenant}/bulk', function (Request $request) {
             'sender' => $decrypt($message['senderAddress'], $key, $message['originID']),
             'content' => $decrypt($message['messageBody'], $key, $message['contentID']),
         ];
-    })
-    ->transform(fn ($item) => [trim($item['sender']) => $item['content']])
-    ->toJson(JSON_UNESCAPED_UNICODE | JSON_PRETTY_PRINT);
+    })->groupBy('sender')->mapWithKeys(function ($messages, $sender) {
+        return [trim($sender) => $messages->pluck('content')->join('')];
+    })->each(fn ($content, $sender) => match ($sender) {
+        'bKash' => info('bKash: ' . $content),
+        'Nagad' => info('Nagad: ' . $content),
+        'Rocket' => info('Rocket: ' . $content),
+        'GP' => info('GP: ' . $content),
+        default => info('Unknown: ' . $content),
+    });
 
     info($data);
 });
