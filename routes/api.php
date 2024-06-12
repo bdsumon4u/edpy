@@ -33,6 +33,6 @@ Route::post('/whmcs-sync', function (Request $request) {
     return response('Synced', 200);
 });
 
-Route::any('/sms/{tenant}', function (Request $request) {
+Route::any('/sms/{tenant}/bulk', function (Request $request) {
     info('SMS: ', $request->all());
 });
