@@ -2,6 +2,7 @@
 
 namespace App\Filament\Pages;
 
+use App\Models\Method;
 use App\Models\Payment as Invoice;
 use Filament\Pages\SimplePage;
 
@@ -14,4 +15,6 @@ class Payment extends SimplePage
     protected ?string $maxWidth = 'md';
 
     public Invoice $invoice;
+
+    public ?Method $method;
 }

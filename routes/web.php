@@ -55,4 +55,4 @@ Route::get('/', function () {
 });
 
 // Livewire Route for MakePayment component
-Route::get('pay/{invoice}', Payment::class)->name('make-payment');
+Route::get('pay/{invoice}/{method?}', Payment::class)->name('make-payment');
