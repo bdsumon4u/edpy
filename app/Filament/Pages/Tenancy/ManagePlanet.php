@@ -3,6 +3,7 @@
 namespace App\Filament\Pages\Tenancy;
 
 use Filament\Forms\Components\Actions\Action;
+use Filament\Forms\Components\FileUpload;
 use Filament\Forms\Components\Grid;
 use Filament\Forms\Components\Section;
 use Filament\Forms\Components\TextInput;
@@ -28,14 +29,25 @@ class ManagePlanet extends EditTenantProfile
                     ->schema([
                         Section::make('Planet Settings')
                             ->schema([
-                                
+
                             ])
                             ->columns(2)
                             ->columnSpan(2),
-                        Section::make('Planet Informatio')
+                        Section::make()
                             ->schema([
+                                FileUpload::make('logo')
+                                    ->placeholder('Upload a logo')
+                                    ->hiddenLabel()
+                                    ->required()
+                                    ->previewable()
+                                    ->columnSpanFull(),
                                 TextInput::make('name')
                                     ->required(),
+                                TextInput::make('expires_at')
+                                    ->formatStateUsing(function (Model $record): string {
+                                        return $record->expires_at->format('d-M-Y');
+                                    })
+                                    ->disabled(),
                                 TextInput::make('key')
                                     ->disabled()
                                     ->suffixAction(
@@ -47,9 +59,12 @@ class ManagePlanet extends EditTenantProfile
                                                     $tooltip("'.__('Copied to clipboard').'", { timeout: 1500 });'
                                                 );
                                             })
-                                    ),
+                                    )
+                                    ->columnSpanFull(),
                                 TextInput::make('secret')
                                     ->disabled()
+                                    ->password()
+                                    ->revealable()
                                     ->suffixAction(
                                         Action::make('generate')
                                             ->icon('heroicon-o-arrow-path')
@@ -64,14 +79,11 @@ class ManagePlanet extends EditTenantProfile
                                                     $tooltip("'.__('Copied to clipboard').'", { timeout: 1500 });'
                                                 );
                                             })
-                                    ),
-                                TextInput::make('expires_at')
-                                    ->formatStateUsing(function (Model $record): string {
-                                        return $record->expires_at->format('d-M-Y');
-                                    })
-                                    ->disabled(),
+                                    )
+                                    ->columnSpanFull(),
                             ])
-                            ->columnSpan(1),
+                            ->columnSpan(1)
+                            ->columns(2),
                     ]),
             ]);
     }

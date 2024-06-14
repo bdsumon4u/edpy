@@ -23,6 +23,11 @@ class Planet extends Model
         return $this->belongsToMany(User::class);
     }
 
+    public function methods(): HasMany
+    {
+        return $this->hasMany(Method::class);
+    }
+
     public function transactions(): HasMany
     {
         return $this->hasMany(Transaction::class);

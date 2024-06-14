@@ -1,20 +1,24 @@
 <?php
+
 namespace App\Filament\Resources\MessageResource\Api\Handlers;
 
+use App\Filament\Resources\MessageResource;
 use Illuminate\Http\Request;
 use Rupadana\ApiService\Http\Handlers;
-use App\Filament\Resources\MessageResource;
 
-class MessageHandler extends Handlers {
-    public static string | null $uri = '/';
-    public static string | null $resource = MessageResource::class;
+class MessageHandler extends Handlers
+{
+    public static ?string $uri = '/';
+
+    public static ?string $resource = MessageResource::class;
 
     public static function getMethod()
     {
         return Handlers::POST;
     }
 
-    public static function getModel() {
+    public static function getModel()
+    {
         return static::$resource::getModel();
     }
 
@@ -26,6 +30,6 @@ class MessageHandler extends Handlers {
 
         $model->save();
 
-        return static::sendSuccessResponse($model, "Successfully Create Resource");
+        return static::sendSuccessResponse($model, 'Successfully Create Resource');
     }
 }

@@ -5,6 +5,7 @@ namespace App\Providers\Filament;
 use App\Filament\Pages\Tenancy\ManagePlanet;
 use App\Filament\Pages\Tenancy\RegisterPlanet;
 use App\Models\Planet;
+use Filament\Facades\Filament;
 use Filament\Http\Middleware\Authenticate;
 use Filament\Http\Middleware\DisableBladeIconComponents;
 use Filament\Http\Middleware\DispatchServingFilamentEvent;
@@ -15,6 +16,8 @@ use Filament\Support\Colors\Color;
 use Filament\Widgets;
 use Illuminate\Cookie\Middleware\AddQueuedCookiesToResponse;
 use Illuminate\Cookie\Middleware\EncryptCookies;
+use Illuminate\Database\Eloquent\Model;
+use Illuminate\Database\Eloquent\Relations\BelongsTo;
 use Illuminate\Foundation\Http\Middleware\VerifyCsrfToken;
 use Illuminate\Routing\Middleware\SubstituteBindings;
 use Illuminate\Session\Middleware\AuthenticateSession;
@@ -38,7 +41,7 @@ class AppPanelProvider extends PanelProvider
             ->colors([
                 'primary' => Color::Neutral,
             ])
-            ->font('Poppins')
+            ->font('Poppin')
             ->sidebarCollapsibleOnDesktop()
             ->sidebarWidth('18rem')
             ->plugins([
@@ -73,5 +76,16 @@ class AppPanelProvider extends PanelProvider
             ->tenantProfile(ManagePlanet::class)
             ->viteTheme('resources/css/filament/app/theme.css')
             ->spa();
+    }
+
+    public function boot(): void
+    {
+        Model::resolveRelationUsing(
+            ($panel = Filament::getCurrentPanel())->getTenantOwnershipRelationshipName(),
+            fn (Model $model): BelongsTo => $model->belongsTo(
+                $tenantModel = $panel->getTenantModel(),
+                app($tenantModel)->getForeignKey(),
+            ),
+        );
     }
 }

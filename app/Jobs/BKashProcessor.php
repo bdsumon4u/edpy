@@ -17,7 +17,7 @@ class BKashProcessor implements ShouldQueue
      */
     public function __construct(private string $message)
     {
-        $this->message = "You have received Tk 15.00 from 01831899955. Fee Tk 0.00. Balance Tk 2,133.04. TrxID BFA95R2DQ1 at 10/06/2024 16:23";
+        $this->message = 'You have received Tk 15.00 from 01831899955. Fee Tk 0.00. Balance Tk 2,133.04. TrxID BFA95R2DQ1 at 10/06/2024 16:23';
     }
 
     /**

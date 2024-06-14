@@ -3,12 +3,16 @@
 namespace App\Http\Controllers\Api;
 
 use App\Http\Controllers\Controller;
-use App\Jobs\BKashProcessor;
 use App\Models\Planet;
 use Illuminate\Http\Request;
 
 class MessageController extends Controller
 {
+    private array $patterns = [
+        'bKash' => '/You have received Tk ([0-9.]+) from ([0-9]+). Fee Tk ([0-9.]+). Balance Tk ([0-9,.]+). TrxID ([A-Z0-9]+) at ([0-9\/]+) ([0-9:]+)/',
+        'Nagad' => '/Money Received. Amount: Tk ([0-9,.]+) Sender: ([0-9]+) Ref: ([A-Z0-9]+) at ([0-9\/]+) ([0-9:]+)/',
+    ];
+
     /**
      * Handle the incoming request.
      */
@@ -30,22 +34,16 @@ class MessageController extends Controller
                 'content' => $decrypt($message['messageBody'], $key, $message['contentID']),
             ];
         })->groupBy('sender')->mapWithKeys(fn ($messages, $sender) => [
-            trim($sender) => $messages->pluck('content')->join('')
-        ])->each(fn ($content, $sender) => match ($sender) {
-            'bKash' => $this->bKashProcessor($tenant, $content),
-            // 'Nagad' => NagadProcessor::dispatch($content),
-            // 'Rocket' => RocketProcessor::dispatch($content),
-            // 'Upay' => UpayProcessor::dispatch($content),
-            // 'CellFin' => CellFinProcessor::dispatch($content),
-            default => info('Unknown: ' . $content),
+            trim($sender) => $messages->pluck('content')->join(''),
+        ])->each(fn ($content, $sender) => match (true) {
+            in_array($sender, array_keys($this->patterns)) => $this->processMFS($tenant, $content, $sender),
+            default => info('Unknown: '.$content),
         });
     }
 
-    private function bKashProcessor(Planet $tenant, string $message): void
+    private function processMFS(Planet $tenant, string $message, string $sender): void
     {
-        $pattern = '/You have received Tk ([0-9.]+) from ([0-9]+). Fee Tk ([0-9.]+). Balance Tk ([0-9,.]+). TrxID ([A-Z0-9]+) at ([0-9\/]+) ([0-9:]+)/';
-
-        if(preg_match($pattern, $message, $matches)) {
+        if (preg_match($this->patterns[$sender], $message, $matches)) {
             $matches[1] = str_replace(',', '', $matches[1]);
 
             $tenant->transactions()->create([
