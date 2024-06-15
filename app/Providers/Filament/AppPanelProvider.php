@@ -46,6 +46,16 @@ class AppPanelProvider extends PanelProvider
             ->sidebarWidth('18rem')
             ->plugins([
                 ApiServicePlugin::make(),
+                \Awcodes\Curator\CuratorPlugin::make()
+                    ->label('Media')
+                    ->pluralLabel('Media')
+                    ->navigationIcon('heroicon-o-photo')
+                    ->navigationGroup('Content')
+                    ->navigationSort(3)
+                    ->navigationCountBadge()
+                    ->registerNavigation(true)
+                    ->defaultListView('grid' || 'list')
+                    ->resource(\Awcodes\Curator\Resources\MediaResource::class)
             ])
             ->discoverResources(in: app_path('Filament/Resources'), for: 'App\\Filament\\Resources')
             ->discoverPages(in: app_path('Filament/Pages'), for: 'App\\Filament\\Pages')
@@ -78,8 +88,9 @@ class AppPanelProvider extends PanelProvider
             ->spa();
     }
 
-    public function boot(): void
+    public function register(): void
     {
+        parent::register();
         Model::resolveRelationUsing(
             ($panel = Filament::getCurrentPanel())->getTenantOwnershipRelationshipName(),
             fn (Model $model): BelongsTo => $model->belongsTo(

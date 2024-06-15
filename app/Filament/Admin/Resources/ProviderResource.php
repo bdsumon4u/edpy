@@ -5,6 +5,7 @@ namespace App\Filament\Admin\Resources;
 use App\Filament\Admin\Resources\ProviderResource\Pages;
 use App\Filament\Admin\Resources\ProviderResource\RelationManagers;
 use App\Models\Provider;
+use Awcodes\Curator\Components\Forms\CuratorPicker;
 use Filament\Forms;
 use Filament\Forms\Form;
 use Filament\Resources\Resource;
@@ -35,6 +36,8 @@ class ProviderResource extends Resource
                     ->required(),
                 Forms\Components\KeyValue::make('meta')
                     ->reorderable(),
+                CuratorPicker::make('logo')
+                    ->required(),
             ]);
     }
 
